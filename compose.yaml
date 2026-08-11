@@ -1,0 +1,30 @@
+services:
+
+  database:
+    image: postgres:18
+
+    environment:
+      POSTGRES_USER: mario
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: learningdb
+
+    ports:
+      - "5432:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mario -d learningdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+
+  app1:
+    build: ./webserver
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      database:
+        condition: service_healthy
